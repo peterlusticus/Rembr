@@ -1,21 +1,19 @@
 # Rembr
 
-RaspberryPi CNC embroidery library
+###### RaspberryPi CNC embroidery library
 
-### Unser Projekt
+## Unser Projekt
 
 Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 ersetzen.
 
-### Gliederung
-
-### Ablauf
+## Ablauf
 
 ####  Usersicht
 
 1.  SVG-Datei auf einen bestimmten Stick spielen und an den Raspberry stecken.
 2.  Die Datei totalPrint.py ausführen
 
-####  Entwicklersicht ()
+####  Entwicklersicht
 
 1.  Beim ausführen der totalPrint.py, wird das SVG in einzelne Farben aufgesplittet, sodass auf dem Stick nun einzelne SVG-Dateien der verschiedenen Farben liegen
 2.  Die einzelnen SVG-Dateien werden in einzelne G-GCODE-Dateien mithilfe der inkstitch-Library umgewandelt
