@@ -23,3 +23,9 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 erse
         1.  Währenddessen wird der Stickvorgang gestartet \[embroiderystart()\]
         2.  Sobald der G-CODE durchgelaufen ist, wird der Stickvorgang beendet \[embroiderystop()\]
         3.  Und der Faden abgeschnitten \[cut()\]
+
+## Todo
+
+*    [ ]  dd
+*    [ ]  dd
+*    [ ]  dd
