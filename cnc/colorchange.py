@@ -219,6 +219,7 @@ def free_Rope():
 
 #Move head right
 def MoveHead_Right(count):
+    count = -count
     for x in range(count):
         if GPIO.input(s7), 
             GPIO.output(m5, GPIO.HIGH)
@@ -232,10 +233,10 @@ def MoveHead_Right(count):
 #Move Head left
 def MoveHead_Left(count):
     for x in range(count):
-        if GPIO.input(s7, GPIO.HIGH), 
+        if GPIO.input(s7), 
             GPIO.output(m5, GPIO.HIGH)
             time.sleep(delay)
-        if GPIO.input(s8, GPIO.HIGH):
+        if GPIO.input(s8):
             GPIO.output(m5, GPIO.LOW)
             time.sleep(delay)
         else:
@@ -277,37 +278,57 @@ def prep():
     NeedleGear_disengage()
     NeedleStorageArm_up()
 
-#Start embroidery
-def embroideryStart()
-    #TODO
-#----------------------------------MAIN-METHOD----------------------------------
-
-def execute()
-    #Change color
-    prep()
-    ColorConverter()
-    RefreshColorList()
-    color_befor_change = 0
-    for color in color_list:
-        #Setup color
-        color_idx = int(color)
-        diff = color_idx - color_before
-        if diff > 0 :
-            Move Head left(diff)
-        if diff < 0 :
-            diff = -diff
-            MoveHead_Right(diff)
-        color_before = color_idx
-        time.sleep(2)
-        #Start gcode-execution
-        LIFR(color)
-        time.sleep(2)
+def post():
     NeedleStorageArm_down() #TODO
     needleGear_engage() #TODO
     msc #TODO m1 low speed 3x rotations
 
-    if nps #needle in up position: TODO
-        #TODO
+#Start embroidery
+def embroideryStart():
+    #TODO
+
+def check():
+    #TODO
+    a = True
+    if GPIO.input(s2):
+        a=True
+        if GPIO.input(s5):
+            a=True
+            if GPIO.input(s9):
+                a=True
+                if GPIO.input(s3):
+                    a=True
+    else:
+        a=False
+    return a
+#----------------------------------MAIN-METHOD----------------------------------
+
+def execute()
+    if(check()):
+        #Change color
+        prep()
+        ColorConverter()
+        RefreshColorList()
+        color_before = 0
+        for color in color_list:
+            #Setup color
+            prep()
+            color_idx = int(color)
+            diff = color_idx - color_before
+            if diff > 0 :
+                Move Head left(diff)
+            if diff < 0 :
+                MoveHead_Right(diff)
+            color_before = color_idx
+            post()
+            time.sleep(2)
+            #Start gcode-execution
+            LIFR(color)
+            time.sleep(2)
+
+
+        if nps #needle in up position: TODO
+            #TODO
 
 execute()
 
