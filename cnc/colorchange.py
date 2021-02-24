@@ -7,6 +7,7 @@ import os, sys
 filename = 'test.txt'
 dir_left = GPIO.HIGH
 dir_right = GPIO.LOW
+delay = 0.1
 path = "/files/"
 color_list = os.listdir( path )
 #color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
@@ -68,74 +69,99 @@ GPIO.setup(s10, GPIO.IN)
 #----------------------------------HELP-METHODS----------------------------------
 #engage needle gear
 def needleGear_engage():
-    if GPIO.input(s2, GPIO.HIGH):
+    if GPIO.input(s2):
         GPIO.output(m2, GPIO.HIGH)
-    
+        time.sleep(delay)
     if GPIO.input(s1, GPIO.HIGH):
         GPIO.output(m2, GPIO.LOW)
+        time.sleep(delay)
+    else:
+        print("[needleGear_engage] Error")
 
 #disengage needle gear 
 def NeedleGear_disengage():
-    if GPIO.input(s1, GPIO.HIGH):
-         GPIO.output(m2, GPIO.HIGH)
-    if GPIO.input(s2, GPIO.HIGH):
+    if GPIO.input(s1):
+        GPIO.output(m2, GPIO.HIGH)
+        time.sleep(delay)
+    if GPIO.input(s2):
         GPIO.output(m2, GPIO.LOW)
+        time.sleep(delay)
     else:
-        print("needle gear Motor at a wrong position")
-
+        print("[NeedleGear_disengage] needle gear Motor at a wrong position")
 
 #move Needle Storage Arm up
 def NeedleStorageArm_up():
-    if GPIO.input(s5, GPIO.HIGH):
+    if GPIO.input(s5):
         GPIO.output(m4, GPIO.HIGH)
-    if GPIO.input(s6, GPIO.HIGH):
-    GPIO.output(m4, GPIO.LOW)
-
+        time.sleep(delay)
+    if GPIO.input(s6):
+        GPIO.output(m4, GPIO.LOW)
+        time.sleep(delay)
+    else:
+        print("[NeedleStorageArm_up] Error")
 
 #move Needle Storage Arm down
 def NeedleStorageArm_down():
     if GPIO.input(s6, GPIO.HIGH):
         GPIO.output(m4, GPIO.HIGH)
+        time.sleep(delay)
     if GPIO.input(s5, GPIO.HIGH):
         GPIO.output(m4, GPIO.LOW)
-
+        time.sleep(delay)
+    else:
+        print("[NeedleStorageArm_down] Error")
 
 #cut Rope under needle
 def cutRope():
     if GPIO.input(s9, GPIO.HIGH):
         GPIO.output(m6, GPIO.HIGH)
+        time.sleep(delay)
     if GPIO.input(s10, GPIO.HIGH):
         GPIO.output(m6, GPIO.LOW)
+        time.sleep(delay)
     else:
-        print("rope Motor is at a wrong position")
+        print("[cutRope] rope Motor is at a wrong position")
 
 
 #free Rope after cuting  
 def free_Rope():  
-    if GPIO.input(s3, GPIO.HIGH):
+    if GPIO.input(s3):
         GPIO.output(m3, GPIO.HIGH)
-    if GPIO.input(s4, GPIO.HIGH):
+        time.sleep(delay)
+    if GPIO.input(s4):
         GPIO.output(m3, GPIO.LOW)
-        
-    if GPIO.input(s4, GPIO.HIGH):
+        time.sleep(delay)
+    if GPIO.input(s4):
         GPIO.output(m3, GPIO.HIGH)
-    if GPIO.input(s3, GPIO.HIGH):
-         GPIO.output(m3, GPIO.LOW)
+        time.sleep(delay)
+    if GPIO.input(s3):
+        GPIO.output(m3, GPIO.LOW)
+        time.sleep(delay)
+    else:
+        print("[free_Rope] Error")
 
 
 #Move head right
 def MoveHead_Right():
-    if GPIO.input(s7, GPIO.HIGH), 
+    if GPIO.input(s7), 
         GPIO.output(m5, GPIO.HIGH)
-    if GPIO.input(s8, GPIO.HIGH):
+        time.sleep(delay)
+    if GPIO.input(s8):
         GPIO.output(m5, GPIO.LOW)
+        time.sleep(delay)
+    else:
+        print("[MoveHead_Right] Error")
 
 #Move Head left
 def MoveHead_Left():
     if GPIO.input(s7, GPIO.HIGH), 
         GPIO.output(m5, GPIO.HIGH)
-        if GPIO.input(s8, GPIO.HIGH):
-            GPIO.output(m5, GPIO.LOW)
+        time.sleep(delay)
+    if GPIO.input(s8, GPIO.HIGH):
+        GPIO.output(m5, GPIO.LOW)
+        time.sleep(delay)
+    else:
+        print("[MoveHead_Left] Error")
 
 
 #----------------------------------MAIN-METHODS----------------------------------
