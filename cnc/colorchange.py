@@ -1,12 +1,15 @@
 #Depending librarys
 import RPi.GPIO as GPIO
 import time
+import os, sys
 
 #Global var's
 filename = 'test.txt'
 dir_left = GPIO.HIGH
 dir_right = GPIO.LOW
-color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
+path = "/files/"
+color_list = os.listdir( path )
+#color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 
 #Define and set up Pins
 GPIO.setmode(GPIO.BOARD)
@@ -150,9 +153,9 @@ def colorChange(color)
 
     color_befor_change = 0 
     for idx, color in color_list:
-        idx=idx++
         color_idx = idx
         diff = color_befor_change - color_idx
+        diff = diff+1
         if diff > 0 :
             for x in range(diff):
                 Move Head left()
