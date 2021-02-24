@@ -83,6 +83,10 @@ GPIO.setup(m6, GPIO.OUT)
 GPIO.setup(s9, GPIO.IN)
 GPIO.setup(s10, GPIO.IN)        
 
+#Unterfadenwächter
+wfw = 28
+GPIO.setup(ufw, GPIO.IN)
+
 #----------------------------------HELP-METHODS----------------------------------
 #Excecute the count of x-steps
 def X(Fsteps,Bsteps):
@@ -267,7 +271,7 @@ def ColorConverter():
 def RefreshColorList():
     color_list = os.listdir( path )
 
-def prep():
+def embroideryStop():
     msc #TODO digital code for high resistance = low motor speed
     two low speed rotations
     nps #TODO the needle must be sensed down
@@ -281,11 +285,21 @@ def prep():
 def post():
     NeedleStorageArm_down() #TODO
     needleGear_engage() #TODO
-    msc #TODO m1 low speed 3x rotations
+
+def msc_start():
+    #langsam anlaufen
+    GPIO.output(msc, GPIO.HIGH) #TODO: Statt GPIO.HIGH - "for loop von langsam zu schnell"
+
+def real_start():
+    #voll durchrattern
+    GPIO.output(msc, GPIO.HIGH) #TODO: Statt GPIO.HIGH - "ganz schnell"
 
 #Start embroidery
 def embroideryStart():
-    #TODO
+    while ufw:
+        msc_start()
+        time.sleep(6)
+        real_start()
 
 def check():
     #TODO
@@ -312,7 +326,6 @@ def execute()
         color_before = 0
         for color in color_list:
             #Setup color
-            prep()
             color_idx = int(color)
             diff = color_idx - color_before
             if diff > 0 :
@@ -321,11 +334,14 @@ def execute()
                 MoveHead_Right(diff)
             color_before = color_idx
             post()
+            #Start embroidery
+            embroideryStart()
             time.sleep(2)
             #Start gcode-execution
             LIFR(color)
             time.sleep(2)
-
+            #Finish embroidery
+            embroideryStop()
 
         if nps #needle in up position: TODO
             #TODO
