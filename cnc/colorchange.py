@@ -10,6 +10,7 @@ dir_right = GPIO.LOW
 delay = 0.1
 path = "/files/"
 color_list = os.listdir( path )
+all_color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 #color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 
 #Define and set up Pins
@@ -142,27 +143,53 @@ def free_Rope():
 
 
 #Move head right
-def MoveHead_Right():
-    if GPIO.input(s7), 
-        GPIO.output(m5, GPIO.HIGH)
-        time.sleep(delay)
-    if GPIO.input(s8):
-        GPIO.output(m5, GPIO.LOW)
-        time.sleep(delay)
-    else:
-        print("[MoveHead_Right] Error")
+def MoveHead_Right(count):
+    for x in range(count):
+        if GPIO.input(s7), 
+            GPIO.output(m5, GPIO.HIGH)
+            time.sleep(delay)
+        if GPIO.input(s8):
+            GPIO.output(m5, GPIO.LOW)
+            time.sleep(delay)
+        else:
+            print("[MoveHead_Right] Error")
 
 #Move Head left
-def MoveHead_Left():
-    if GPIO.input(s7, GPIO.HIGH), 
-        GPIO.output(m5, GPIO.HIGH)
-        time.sleep(delay)
-    if GPIO.input(s8, GPIO.HIGH):
-        GPIO.output(m5, GPIO.LOW)
-        time.sleep(delay)
-    else:
-        print("[MoveHead_Left] Error")
+def MoveHead_Left(count):
+    for x in range(count):
+        if GPIO.input(s7, GPIO.HIGH), 
+            GPIO.output(m5, GPIO.HIGH)
+            time.sleep(delay)
+        if GPIO.input(s8, GPIO.HIGH):
+            GPIO.output(m5, GPIO.LOW)
+            time.sleep(delay)
+        else:
+            print("[MoveHead_Left] Error")
 
+def ColorConverter():
+    for filename in enumerate(os.listdir( path )):
+        if filename = "schwarz":
+            dst = "1" + ".txt"
+        if filename = "weiß":
+            dst = "2" + ".txt"
+        if filename = "orange":
+            dst = "3" + ".txt"
+        if filename = "lila":
+            dst = "4" + ".txt"
+        if filename = "beige":
+            dst = "5" + ".txt"
+        if filename = "blau":
+            dst = "6" + ".txt"
+        if filename = "gelb":
+            dst = "7" + ".txt"
+        if filename = "grün":
+            dst = "8" + ".txt"
+        src = path + filename
+        dst = path + dst 
+        os.rename(src, dst)
+
+def RefreshColorList():
+    color_list = os.listdir( path )
 
 #----------------------------------MAIN-METHODS----------------------------------
 #Change color
@@ -177,19 +204,19 @@ def colorChange(color)
     NeedleGear_disengage()
     NeedleStorageArm_up()
 
-    color_befor_change = 0 
-    for idx, color in color_list:
-        color_idx = idx
-        diff = color_befor_change - color_idx
-        diff = diff+1
+    ColorConverter()
+    RefreshColorList()
+
+    color_befor_change = 0
+    for color in color_list:
+        color_idx = int(color)
+        diff = color_idx - color_before
         if diff > 0 :
-            for x in range(diff):
-                Move Head left()
+            Move Head left(diff)
         if diff < 0 :
             diff = -diff
-            for x in range(diff):
-                MoveHead_Right()
-        color_befor_change = idx
+            MoveHead_Right(diff)
+        color_before = color_idx
 
     NeedleStorageArm_down()
     needleGear_engage()
