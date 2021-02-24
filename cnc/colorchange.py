@@ -11,11 +11,28 @@ delay = 0.1
 path = "/files/"
 color_list = os.listdir( path )
 all_color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
+dir_left = GPIO.HIGH
+dir_right = GPIO.LOW
 #color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 
 #Define and set up Pins
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
+#X-Axis
+xdir = 13
+xpul = 11
+xena = 15
+GPIO.setup(xdir, GPIO.OUT)
+GPIO.setup(xpul, GPIO.OUT)
+GPIO.setup(xena, GPIO.OUT)
+
+#Y-Axis
+ydir = 21
+ypul = 19
+yena = 23
+GPIO.setup(ydir, GPIO.OUT)
+GPIO.setup(ypul, GPIO.OUT)
+GPIO.setup(yena, GPIO.OUT
 
 #big needle motor 24V
 #analog to digital converter controls digital potentiometer conrols motor speed = msc
@@ -68,6 +85,65 @@ GPIO.setup(s9, GPIO.IN)
 GPIO.setup(s10, GPIO.IN)        
 
 #----------------------------------HELP-METHODS----------------------------------
+#Excecute the count of x-steps
+def X(Fsteps,Bsteps):
+        GPIO.output(xena, GPIO.HIGH)
+        for i in range(Fsteps):
+            XSTEP(dir_left)
+        for i in range(Bsteps):
+            XSTEP(dir_right)
+        GPIO.output(xena, GPIO.LOW)
+            
+#Excecute the count of y-steps
+def Y(Fsteps, Bsteps):
+        GPIO.output(yena, GPIO.HIGH)
+        for i in range(Bsteps):
+            YSTEP(dir_left)
+        for i in range(Fsteps):
+            YSTEP(dir_right)
+        GPIO.output(yena, GPIO.LOW)
+
+#Make a step on the x-axis
+def XSTEP(dir):
+    GPIO.output(xdir, dir)
+    GPIO.output(xpul, GPIO.HIGH)
+    time.sleep(0.009)
+    GPIO.output(xpul, GPIO.LOW)
+    time.sleep(0.009)
+
+#Make a step on the y-axis
+def YSTEP(dir):
+    GPIO.output(ydir, dir)
+    GPIO.output(ypul, GPIO.HIGH)
+    time.sleep(0.009)
+    GPIO.output(ypul, GPIO.LOW)
+    time.sleep(0.009)
+
+#Define axis and directions (call X() or Y() functions)
+def JOG(Axis, Delta):
+    if Delta > 0:
+            Axis(abs(Delta),0)
+    elif Delta < 0:
+            Axis(0,abs(Delta))
+
+#Open steps-file and execute the steps
+def LIFR(filename):
+        with open(filename) as file:
+                for line in file:
+                        if "X" and "Y" in line:
+                                #Split line and call jog-method
+                                Gx = (line.split(' ')[1])
+                                Gx = (Gx[1:])
+                                JOG(X,int(Gx))
+
+                                Gy = (line.split(' ')[2])
+                                Gy = (Gy[1:])
+                                Gy = Gy.replace('.','')
+                                JOG(Y,int(Gy))
+        #Turn motor off
+        GPIO.output(xena, GPIO.HIGH)
+        GPIO.output(yena, GPIO.HIGH)
+
 #engage needle gear
 def needleGear_engage():
     if GPIO.input(s2):
@@ -191,9 +267,7 @@ def ColorConverter():
 def RefreshColorList():
     color_list = os.listdir( path )
 
-#----------------------------------MAIN-METHODS----------------------------------
-#Change color
-def colorChange(color)
+def prep():
     msc #TODO digital code for high resistance = low motor speed
     two low speed rotations
     nps #TODO the needle must be sensed down
@@ -203,12 +277,16 @@ def colorChange(color)
     free_Rope()
     NeedleGear_disengage()
     NeedleStorageArm_up()
+#----------------------------------MAIN-METHODS----------------------------------
 
+def execute(color)
+    #Change color
+    prep()
     ColorConverter()
     RefreshColorList()
-
     color_befor_change = 0
     for color in color_list:
+        #Setup color
         color_idx = int(color)
         diff = color_idx - color_before
         if diff > 0 :
@@ -217,6 +295,10 @@ def colorChange(color)
             diff = -diff
             MoveHead_Right(diff)
         color_before = color_idx
+        time.sleep(2)
+        #Start gcode-execution
+        LIFR(color)
+        time.sleep(2)
 
     NeedleStorageArm_down()
     needleGear_engage()
