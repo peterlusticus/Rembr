@@ -150,9 +150,9 @@ def colorChange(color)
 
     color_befor_change = 0 
     for idx, color in color_list:
+        idx=idx++
         color_idx = idx
         diff = color_befor_change - color_idx
-        diff = diff+1
         if diff > 0 :
             for x in range(diff):
                 Move Head left()
