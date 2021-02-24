@@ -320,7 +320,6 @@ def check():
 def execute()
     if(check()):
         #Change color
-        prep()
         ColorConverter()
         RefreshColorList()
         color_before = 0
@@ -336,10 +335,9 @@ def execute()
             post()
             #Start embroidery
             embroideryStart()
-            time.sleep(2)
             #Start gcode-execution
             LIFR(color)
-            time.sleep(2)
+            time.sleep(delay)
             #Finish embroidery
             embroideryStop()
 
