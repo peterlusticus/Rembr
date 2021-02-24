@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 import time
 import os, sys
+import spidev
 
 #Global var's
 filename = 'test.txt'
@@ -271,28 +272,43 @@ def ColorConverter():
 def RefreshColorList():
     color_list = os.listdir( path )
 
-def embroideryStop():
-    msc #TODO digital code for high resistance = low motor speed
-    two low speed rotations
-    nps #TODO the needle must be sensed down
-    cutRope()
-    msc #TODO low Speed to up position
-    GPIO.output(m1, GPIO.LOW)
-    free_Rope()
-    NeedleGear_disengage()
-    NeedleStorageArm_up()
+def write_pot(input):
+    msb = input >> 8
+    lsb = input & 0xFF
+    spi.xfer([msb, lsb])
 
-def post():
-    NeedleStorageArm_down() #TODO
-    needleGear_engage() #TODO
+def embroideryStop():
+    #Langsam auslaufen
+    while True:
+        for i in range(0x00, 0x1FF, -1):
+            write_pot(i)
+            time.sleep(.005)
+    #Während die Nadel unten ist, Faden abschneiden...
+    while nps==GPIO.LOW:
+        cutRope()
+        #...und die Nadel wieder nach oben bewegen
+        if nps:
+            GPIO.output(m1, GPIO.LOW)
+            while nps:
+                free_Rope()
+                NeedleGear_disengage()
+                NeedleStorageArm_up()
 
 def msc_start():
-    #langsam anlaufen
-    GPIO.output(msc, GPIO.HIGH) #TODO: Statt GPIO.HIGH - "for loop von langsam zu schnell"
+    #Langsam anlaufen
+    while True:
+        for i in range(0x00, 0x1FF, 1):
+            write_pot(i)
+            time.sleep(.005)
+    #GPIO.output(msc, GPIO.HIGH) #TODO: Statt GPIO.HIGH - "for loop von langsam zu schnell"
 
 def real_start():
     #voll durchrattern
     GPIO.output(msc, GPIO.HIGH) #TODO: Statt GPIO.HIGH - "ganz schnell"
+
+def post():
+    NeedleStorageArm_down() #TODO
+    needleGear_engage() #TODO
 
 #Start embroidery
 def embroideryStart():
@@ -328,7 +344,7 @@ def execute()
             color_idx = int(color)
             diff = color_idx - color_before
             if diff > 0 :
-                Move Head left(diff)
+                MoveHead_Left(diff)
             if diff < 0 :
                 MoveHead_Right(diff)
             color_before = color_idx
@@ -340,9 +356,11 @@ def execute()
             time.sleep(delay)
             #Finish embroidery
             embroideryStop()
+            time.sleep(delay)
+            #Head in starting position
+            MoveHead_Left(color_idx)
 
         if nps #needle in up position: TODO
             #TODO
 
 execute()
-
