@@ -286,16 +286,16 @@ def embroideryStop():
     #Während die Nadel unten ist, Faden abschneiden...
     if nps:
         GPIO.output(m1, GPIO.HIGH)
-        if nps==GPIO.LOW:
+    if nps==GPIO.LOW:
+        GPIO.output(m1, GPIO.LOW)
+        cutRope()
+        #...und die Nadel wieder nach oben bewegen
+        if nps:
             GPIO.output(m1, GPIO.LOW)
-            cutRope()
-            #...und die Nadel wieder nach oben bewegen
-            if nps:
-                GPIO.output(m1, GPIO.LOW)
-                while nps:
-                    free_Rope()
-                    NeedleGear_disengage()
-                    NeedleStorageArm_up()
+            while nps:
+                free_Rope()
+                NeedleGear_disengage()
+                NeedleStorageArm_up()
 
 def msc_start():
     #Langsam anlaufen
