@@ -13,7 +13,6 @@ color_list = os.listdir( path )
 all_color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 dir_left = GPIO.HIGH
 dir_right = GPIO.LOW
-#color_list = ["schwarz","weiß","orange","lila","beige","blau","gelb","grün"]
 
 #Define and set up Pins
 GPIO.setmode(GPIO.BOARD)
@@ -277,9 +276,13 @@ def prep():
     free_Rope()
     NeedleGear_disengage()
     NeedleStorageArm_up()
-#----------------------------------MAIN-METHODS----------------------------------
 
-def execute(color)
+#Start embroidery
+def embroideryStart()
+    #TODO
+#----------------------------------MAIN-METHOD----------------------------------
+
+def execute()
     #Change color
     prep()
     ColorConverter()
@@ -299,14 +302,12 @@ def execute(color)
         #Start gcode-execution
         LIFR(color)
         time.sleep(2)
-
-    NeedleStorageArm_down()
-    needleGear_engage()
+    NeedleStorageArm_down() #TODO
+    needleGear_engage() #TODO
     msc #TODO m1 low speed 3x rotations
 
-    if nps #needle in up position:
+    if nps #needle in up position: TODO
         #TODO
 
-#Start embroidery
-def embroideryStart()
-    #TODO
+execute()
+
