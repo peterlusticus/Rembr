@@ -11,12 +11,12 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 erse
 ####  Usersicht
 
 1.  SVG-Datei auf einen bestimmten Stick spielen und an den Raspberry stecken.
-2.  Die Datei totalPrint.py ausführen
+2.  Die Datei rembr.py ausführen
 
 ####  Entwicklersicht
 
-1.  Beim ausführen der totalPrint.py, wird das SVG in einzelne Farben aufgesplittet, sodass auf dem Stick nun einzelne SVG-Dateien der verschiedenen Farben liegen
-2.  Die einzelnen SVG-Dateien werden in einzelne G-GCODE-Dateien mithilfe der inkstitch-Library umgewandelt
+(1.  Beim ausführen der rembr.py, wird das SVG in einzelne Farben aufgesplittet, sodass auf dem Stick nun einzelne SVG-Dateien der verschiedenen Farben liegen
+2.  Die einzelnen SVG-Dateien werden in einzelne G-GCODE-Dateien mithilfe der inkstitch-Library umgewandelt)
 3.  Nun wird nacheinander jede Farbe gestickt \[print()\]:
     1.  Die Farbe wird gewechselt \[changecolor()\]
     2.  Die G-CODE-Dateien werden ausgeführt \[cnc()\]
@@ -27,5 +27,6 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 erse
 ## Todo
 
 *    [x]  Methoden: embroideryStart()  embroideryStop()  changeColor()
-*    [ ]  Architektur: Zusammenführung von changecolor.py und print.py; jj
-*    [ ]  Fehlerbehebung: Paralleles ausführen von Methoden um schräg zu sticken; jj
+*    [x]  Architektur: Zusammenführung von changecolor.py und print.py
+*    [ ]  Fehlerbehebung: Paralleles ausführen von Methoden um schräg zu sticken
+*    [ ]  Methoden: svgSplit()   svg2Gcode()
