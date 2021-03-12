@@ -287,3 +287,5 @@ def execute(): #fertig
 print(str(color_list)) #nur zum Test, ob der filename = "grün.txt" oder nur "grün" ist (wichtig für "ColorConverter()")
 time.sleep(5)
 execute()
+GPIO.cleanup()
+exit()
