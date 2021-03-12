@@ -296,8 +296,5 @@ def execute(): #fertig
 print(str(color_list)) #nur zum Test, ob der filename = "1.txt" oder nur "1" ist (wichtig für "CncStart()")
 time.sleep(5)
 execute()
-
-
-#TODO: Testen, ob es mit einer while schleife oder einer if-kaskade besser geht (Ziel: den Motor auf eine bestimmte Position zu bekommen, an der der Sensor HIGH ist)
-# while(GPIO.input(m2_unten, GPIO.LOW)):    ++Idee: statt der if-kaskade++
-#     GPIO.output(m2, GPIO.HIGH)
+GPIO.cleanup()
+exit()
