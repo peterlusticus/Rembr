@@ -26,6 +26,6 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 erse
 
 ## Todo
 
-*    [ ]  Methoden: embroideryStart()  embroideryStop()  changeColor()
+*    [x]  Methoden: embroideryStart()  embroideryStop()  changeColor()
 *    [ ]  Architektur: Zusammenführung von changecolor.py und print.py; jj
 *    [ ]  Fehlerbehebung: Paralleles ausführen von Methoden um schräg zu sticken; jj
