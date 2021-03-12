@@ -15,8 +15,8 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 erse
 
 ####  Entwicklersicht
 
-(1.  Beim ausführen der rembr.py, wird das SVG in einzelne Farben aufgesplittet, sodass auf dem Stick nun einzelne SVG-Dateien der verschiedenen Farben liegen
-2.  Die einzelnen SVG-Dateien werden in einzelne G-GCODE-Dateien mithilfe der inkstitch-Library umgewandelt)
+1.  (Beim ausführen der rembr.py, wird das SVG in einzelne Farben aufgesplittet, sodass auf dem Stick nun einzelne SVG-Dateien der verschiedenen Farben liegen)
+2.  (Die einzelnen SVG-Dateien werden in einzelne G-GCODE-Dateien mithilfe der inkstitch-Library umgewandelt)
 3.  Nun wird nacheinander jede Farbe gestickt \[print()\]:
     1.  Die Farbe wird gewechselt \[changecolor()\]
     2.  Die G-CODE-Dateien werden ausgeführt \[cnc()\]
