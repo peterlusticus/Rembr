@@ -4,7 +4,7 @@
 
 ## Unser Projekt
 
-Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 4 ersetzen.
+Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 3 ersetzen.
 
 ## Ablauf
 
