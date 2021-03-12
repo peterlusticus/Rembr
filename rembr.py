@@ -5,10 +5,10 @@ import os, sys
 import spidev
 
 #Global var's
-filename = 'test.txt'
+filename = 'grün.txt'
 dir_left = GPIO.HIGH
 dir_right = GPIO.LOW
-path = "/files/"
+path = "/home/pi/Desktop/Rembr-main/cnc"
 color_list = os.listdir( path )
 color_before = 0
 
@@ -28,7 +28,7 @@ ypul = 19
 yena = 23
 GPIO.setup(ydir, GPIO.OUT)
 GPIO.setup(ypul, GPIO.OUT)
-GPIO.setup(yena, GPIO.OUT
+GPIO.setup(yena, GPIO.OUT)
 
 #big needle motor 24V
 #analog to digital converter controls digital potentiometer conrols motor speed = msc
@@ -36,45 +36,44 @@ GPIO.setup(yena, GPIO.OUT
 m1_slow = 3
 m1_middle = 5
 m1_fast = 4
-s1 =7
+m1 =7
 GPIO.setup(m1_slow, GPIO.OUT)
 GPIO.setup(m1_middle, GPIO.OUT)
 GPIO.setup(m1_fast, GPIO.OUT)
 GPIO.setup(s1, GPIO.IN)
 #needle gear
 m2 = 8
-s2_oben = 10
-s2_unten = 12
+m2_oben = 10
+m2_unten = 12
 GPIO.setup(m2, GPIO.OUT)
 GPIO.setup(s2_oben, GPIO.IN)
 GPIO.setup(s2_unten, GPIO.IN)
 #string pulling thing
 m3 = 16
-s3_oben = 18
-s3_unten = 22
+m3_oben = 18
+m3_unten = 22
 GPIO.setup(m3, GPIO.OUT)
 GPIO.setup(s3_oben, GPIO.IN)
 GPIO.setup(s3_unten, GPIO.IN)
 #needle storage arm
 m4 = 24
-s4_oben = 26
-s4_unten = 28
+m4_oben = 26
+m4_unten = 28
 GPIO.setup(m4, GPIO.OUT)
 GPIO.setup(s4_oben, GPIO.IN)
 GPIO.setup(s4_unten, GPIO.IN)
 #maschien head
 m5_right = 24
 m5_left = 30
-s5_oben = 26
-s5_unten = 28
+m5_oben = 26
 GPIO.setup(m5_right, GPIO.OUT)
 GPIO.setup(m5_left, GPIO.OUT)
 GPIO.setup(s5_oben, GPIO.IN)
 GPIO.setup(s5_unten, GPIO.IN)
 #String cutting knife
 m6 = 24
-s6_oben = 26
-s6_unten = 28
+m6_oben = 26
+m6_unten = 28
 GPIO.setup(m6, GPIO.OUT)
 GPIO.setup(s6_oben, GPIO.IN)
 GPIO.setup(s6_unten, GPIO.IN)        
@@ -86,28 +85,28 @@ GPIO.setup(ufw, GPIO.IN)
 #STICKEN
 def ColorConverter(): #fertig
     for name in enumerate(os.listdir( path )):
-        if(name = "schwarz"):
+        if(name == "schwarz"):
             dst = "1" + ".txt"
-        if(name = "weiß"):
+        if(name == "weiß"):
             dst = "2" + ".txt"
-        if(name = "orange"):
+        if(name == "orange"):
             dst = "3" + ".txt"
-        if(name = "lila"):
+        if(name == "lila"):
             dst = "4" + ".txt"
-        if(name = "beige"):
+        if(name == "beige"):
             dst = "5" + ".txt"
-        if(name = "blau"):
+        if(name == "blau"):
             dst = "6" + ".txt"
-        if(name = "gelb"):
+        if(name == "gelb"):
             dst = "7" + ".txt"
-        if(name = "grün"):
+        if(name == "grün"):
             dst = "8" + ".txt"
         src = path + name
         dst = path + dst 
         os.rename(src, dst)
 
 def findPosition(): #TODO: m6 (Fadenabschneider) ansteuern und methode beenden
-    while(GPIO.input(s1, GPIO.LOW)): #Nadelposition
+    while(GPIO.input(m1, GPIO.LOW)): #Nadelposition
         GPIO.output(m1_slow, GPIO.HIGH)
 
     if(GPIO.input(m2_unten, GPIO.LOW)): #Getriebe
@@ -133,24 +132,24 @@ def findPosition(): #TODO: m6 (Fadenabschneider) ansteuern und methode beenden
 
 def MoveHead_Right(count): #fertig
     for x in range(count):
-        if(GPIO.input(s5_oben)):
+        if(GPIO.input(m5_oben)):
             GPIO.output(m5_right, GPIO.HIGH)
-            if(GPIO.input(s5_oben)):
+            if(GPIO.input(m5_oben)):
                 GPIO.output(m5_right, GPIO.LOW)
         else:
             GPIO.output(m5_left, GPIO.HIGH)
-            if(GPIO.input(s5_oben)):
+            if(GPIO.input(m5_oben)):
                 GPIO.output(m5_left, GPIO.LOW)
 
 def MoveHead_Left(count): #fertig
     for x in range(count):
-        if(GPIO.input(s5_oben)):
+        if(GPIO.input(m5_oben)):
             GPIO.output(m5_left, GPIO.HIGH)
-            if(GPIO.input(s5_oben)):
+            if(GPIO.input(m5_oben)):
                 GPIO.output(m5_left, GPIO.LOW)
         else:
             GPIO.output(m5_left, GPIO.HIGH)
-            if(GPIO.input(s5_oben)):
+            if(GPIO.input(m5_oben)):
                 GPIO.output(m5_left, GPIO.LOW)
 
 def changeColor(color): #fertig
@@ -200,17 +199,17 @@ def cutRope(): #TODO: Sensoren, etc anpassen
 
 def embroideryStop(): #fertig
     softStop()
-    while(GPIO.input(s1, GPIO.HIGH)):
+    while(GPIO.input(m1, GPIO.HIGH)):
         GPIO.output(m1_slow, GPIO.HIGH)
 
-    if(GPIO.input(s2_unten, GPIO.LOW)): 
+    if(GPIO.input(m2_unten, GPIO.LOW)): 
         GPIO.output(m2, GPIO.HIGH)
-        if(GPIO.input(s2_unten, GPIO.HIGH)):
+        if(GPIO.input(m2_unten, GPIO.HIGH)):
             GPIO.input(m2, GPIO.LOW)
 
-    if(GPIO.input(s4_unten, GPIO.LOW)): 
+    if(GPIO.input(m4_unten, GPIO.LOW)): 
         GPIO.output(m4, GPIO.HIGH)
-        if(GPIO.input(s4_unten, GPIO.HIGH)):
+        if(GPIO.input(m4_unten, GPIO.HIGH)):
             GPIO.input(m4, GPIO.LOW)
     cutRope()
     return True
