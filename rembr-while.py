@@ -110,7 +110,7 @@ def ColorConverter(): #fertig
 def findPosition(): #TODO: m6 (Fadenabschneider) ansteuern und methode beenden
     while(GPIO.input(m1, GPIO.LOW)): #Nadelposition
         GPIO.output(m1_slow, GPIO.HIGH)
-
+        
     #test vom neuen code
     if GPIO.input(m2_unten) == GPIO.HIGH:
         GPIO.output(m2, GPIO.LOW)
