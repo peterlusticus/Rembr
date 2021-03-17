@@ -47,6 +47,9 @@ m2_unten = 12
 GPIO.setup(m2, GPIO.OUT)
 GPIO.setup(s2_oben, GPIO.IN)
 GPIO.setup(s2_unten, GPIO.IN)
+GPIO.setup(m2_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(m2_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 #string pulling thing
 m3 = 16
 m3_oben = 18
@@ -108,6 +111,12 @@ def findPosition(): #TODO: m6 (Fadenabschneider) ansteuern und methode beenden
     while(GPIO.input(m1, GPIO.LOW)): #Nadelposition
         GPIO.output(m1_slow, GPIO.HIGH)
 
+    #test vom neuen code
+    if GPIO.input(m2_unten) == GPIO.HIGH:
+        GPIO.output(m2, GPIO.LOW)
+    else:
+        GPIO.output(m2, GPIO.HIGH)
+        
     while(GPIO.input(m2_unten, GPIO.LOW)): #Getriebe
         GPIO.output(m2, GPIO.HIGH)
     GPIO.output(m2, GPIO.LOW)
