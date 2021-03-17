@@ -2,18 +2,23 @@ import sys
 import time
 import RPi.GPIO as GPIO
 GPIO.setwarnings(False)
-motor = 15
+m5_right = 26
+m5_left = 15
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(motor, GPIO.OUT)
+GPIO.setup(m5_left, GPIO.OUT)
+GPIO.setup(m5_right, GPIO.OUT)
 
-onoff = float(input("1 for on or 0 for off. "))
 
-if onoff == 1:
-    GPIO.output(motor, GPIO.HIGH)
-if onoff == 0:
-    GPIO.output(motor, GPIO.LOW)
-    
-else:
-    print("Invalid")
-    
+#print("TURN RIGHT")
+#GPIO.output(m5_right, GPIO.HIGH)
+#time.sleep(1)
+#GPIO.output(m5_right, GPIO.LOW)
+#time.sleep(.4)
+
+print("TURN LEFT")
+GPIO.output(m5_left, GPIO.HIGH)
+time.sleep(.5)
+print("END")
+GPIO.output(m5_left, GPIO.LOW)
+
 GPIO.cleanup
