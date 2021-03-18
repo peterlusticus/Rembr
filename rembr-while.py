@@ -30,23 +30,23 @@ GPIO.setup(ypul, GPIO.OUT)
 GPIO.setup(yena, GPIO.OUT)
 
 #big needle motor 24V
-#analog to digital converter controls digital potentiometer conrols motor speed = msc
-#needle position sensor = nps
-m1_slow = 3
-m1_middle = 5
-m1_fast = 4
 m1 =7
-GPIO.setup(m1_slow, GPIO.OUT)
-GPIO.setup(m1_middle, GPIO.OUT)
-GPIO.setup(m1_fast, GPIO.OUT)
-GPIO.setup(m1, GPIO.IN)
+SPI_CS_PIN = 17
+SPI_SDISDO_PIN = 22 # mosi
+SPI_CLK_PIN = 23
+GPIO.setup(m1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(SPI_CS_PIN, GPIO.OUT)
+GPIO.setup(SPI_CLK_PIN, GPIO.OUT)
+GPIO.setup(SPI_SDISDO_PIN, GPIO.OUT)
+GPIO.output(SPI_CLK_PIN, False)
+GPIO.output(SPI_SDISDO_PIN, False)
+GPIO.output(SPI_CS_PIN, False)
+
 #needle gear
 m2 = 8
 m2_oben = 10
 m2_unten = 12
 GPIO.setup(m2, GPIO.OUT)
-GPIO.setup(s2_oben, GPIO.IN)
-GPIO.setup(s2_unten, GPIO.IN)
 GPIO.setup(m2_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m2_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
@@ -55,33 +55,37 @@ m3 = 16
 m3_oben = 18
 m3_unten = 22
 GPIO.setup(m3, GPIO.OUT)
-GPIO.setup(s3_oben, GPIO.IN)
-GPIO.setup(s3_unten, GPIO.IN)
+GPIO.setup(m3_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(m3_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 #needle storage arm
 m4 = 24
 m4_oben = 26
 m4_unten = 28
 GPIO.setup(m4, GPIO.OUT)
-GPIO.setup(s4_oben, GPIO.IN)
-GPIO.setup(s4_unten, GPIO.IN)
+GPIO.setup(m4_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(m4_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 #maschien head
 m5_right = 24
 m5_left = 30
 m5_oben = 26
 GPIO.setup(m5_right, GPIO.OUT)
 GPIO.setup(m5_left, GPIO.OUT)
-GPIO.setup(s5_oben, GPIO.IN)
-GPIO.setup(s5_unten, GPIO.IN)
+GPIO.setup(m5_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(m5_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 #String cutting knife
 m6 = 24
 m6_oben = 26
 m6_unten = 28
 GPIO.setup(m6, GPIO.OUT)
-GPIO.setup(s6_oben, GPIO.IN)
-GPIO.setup(s6_unten, GPIO.IN)        
+GPIO.setup(m6_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(m6_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 #Unterfadenwächter
 ufw = 28
-GPIO.setup(ufw, GPIO.IN)
+GPIO.setup(ufw, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #----------------------------------HELP-METHODS----------------------------------
 #STICKEN
@@ -107,51 +111,46 @@ def ColorConverter(): #fertig
         dst = path + dst 
         os.rename(src, dst)
 
-def findPosition(): #TODO: m6 (Fadenabschneider) ansteuern und methode beenden
-    while(GPIO.input(m1, GPIO.LOW)): #Nadelposition
-        GPIO.output(m1_slow, GPIO.HIGH)
+def adjustMotor(sensor, motor):
+    while True:
+        if GPIO.input(sensor) == GPIO.HIGH:
+            GPIO.output(motor, GPIO.LOW)
+        else:
+            GPIO.output(motor, GPIO.HIGH)
         
-    #test vom neuen code
-    if GPIO.input(m2_unten) == GPIO.HIGH:
-        GPIO.output(m2, GPIO.LOW)
-    else:
-        GPIO.output(m2, GPIO.HIGH)
-        
-    while(GPIO.input(m2_unten, GPIO.LOW)): #Getriebe
-        GPIO.output(m2, GPIO.HIGH)
-    GPIO.output(m2, GPIO.LOW)
-
-    while(GPIO.input(m4_unten, GPIO.LOW)): #Nadelarm
-        GPIO.output(m4, GPIO.HIGH)
-    GPIO.output(m4, GPIO.LOW)
-    
-    while(GPIO.input(m3_unten, GPIO.LOW)): #Fadenrückholer
-        GPIO.output(m3, GPIO.HIGH)
-    GPIO.output(m3, GPIO.LOW)
-    
-    while(GPIO.input(m6_unten, GPIO.LOW)): #Fadenabschneider TODO: ist noch unklar, ob es auch zwei schalter gibt, ansonsten schleife wie bei m1
-        GPIO.output(m6, GPIO.HIGH)
-    GPIO.output(m6, GPIO.LOW)
-    
+def findPosition():
+    adjustMotor(m1, m1_low) #Nadelposition
+    adjustMotor(m2_unten, m2) #Getriebe
+    adjustMotor(m4_unten, m4) #Nadelarm
+    adjustMotor(m3_unten, m3) #Fadenrückholer
+    #adjustMotor(m6_unten, m6) #TODO Fadenabschneider  
     return True
 
 def MoveHead_Right(count): #fertig
     for x in range(count):
-        GPIO.output(m5_right, GPIO.HIGH)
-        time.sleep(0.2)
-        while(GPIO.input(m5_oben, GPIO.LOW)):
+        if GPIO.input(m5_oben) == GPIO.HIGH:
             GPIO.output(m5_right, GPIO.HIGH)
-        GPIO.output(m5_right, GPIO.LOW)
-        time.sleep(0.7)
+            time.sleep(.2)
+            adjustMotor(m5_unten, m5_right)
+            time.sleep(.1)
+        else:
+            GPIO.output(m5_right, GPIO.HIGH)
+            time.sleep(.2)
+            adjustMotor(m5_oben, m5_right)
+            time.sleep(.1)
 
 def MoveHead_Left(count): #fertig
     for x in range(count):
-        GPIO.output(m5_left, GPIO.HIGH)
-        time.sleep(0.2)
-        while(GPIO.input(m5_oben, GPIO.LOW)):
+        if GPIO.input(m5_oben) == GPIO.HIGH:
             GPIO.output(m5_left, GPIO.HIGH)
-        GPIO.output(m5_left, GPIO.LOW)
-        time.sleep(0.7)
+            time.sleep(.2)
+            adjustMotor(m5_unten, m5_left)
+            time.sleep(.1)
+        else:
+            GPIO.output(m5_left, GPIO.HIGH)
+            time.sleep(.2)
+            adjustMotor(m5_oben, m5_left)
+            time.sleep(.1)
 
 def changeColor(color): #fertig
     color_idx = int(color)
@@ -164,63 +163,57 @@ def changeColor(color): #fertig
     color_before = color_idx
     return True
 
+def setM1(b):
+    b = "0000" "00" "{0:010b}".format(b)
+    GPIO.output(SPI_CS_PIN, False)
+    for x in b:
+        GPIO.output(SPI_SDISDO_PIN, int(x))
+        GPIO.output(SPI_CLK_PIN, True)
+        GPIO.output(SPI_CLK_PIN, False)
+    time.sleep(.1)
+    GPIO.output(SPI_CS_PIN, True)
+    time.sleep(.1)
+
 def softStart(): #fertig
     print("[WARN] Ihnen bleiben 10 Sekunden um den Motor zu starten")
     time.sleep(10)
     print("[WARN] Nun muss der Motor auf hochtouren laufen, der GCODE wird nun ausgeführt")
-    # GPIO.output(m1_slow, GPIO.HIGH)
-    # time.sleep(2)
-    # GPIO.output(m1_slow, GPIO.LOW)
-    # GPIO.output(m1_middle, GPIO.HIGH)
-    # time.sleep(2)
-    # GPIO.output(m1_middle, GPIO.LOW)
-    # GPIO.output(m1_fast, GPIO.HIGH)
+    # while True:
+    #     for i in range(0, 100, 10):
+    #         print 'set_value:' + str(i)
+    #         setM1(i)
+    #         time.sleep(.1)
 
 def embroideryStart(): #fertig
     softStart()
     return True
 
 def softStop(): #fertig
-    print("[WARN] Ihnen bleiben 10 Sekunden um den Motor zu starten")
+    print("[WARN] Ihnen bleiben 10 Sekunden um den Motor zu stoppen")
     time.sleep(10)
-    print("[WARN] Nun muss der Motor auf hochtouren laufen, der GCODE wird nun ausgeführt")
-    # GPIO.output(m1_fast, GPIO.LOW)
-    # GPIO.output(m1_middle, GPIO.HIGH)
-    # time.sleep(2)
-    # GPIO.output(m1_middle, GPIO.LOW)
-    # GPIO.output(m1_slow, GPIO.HIGH)
-    # time.sleep(2)
-    # GPIO.output(m1_slow, GPIO.LOW)
-
-def cutRope(): #TODO: Sensoren, etc anpassen
-    GPIO.output(m1, GPIO.LOW)
-    GPIO.output(m6, GPIO.HIGH)
-    time.sleep(1)
-    GPIO.output(m6, GPIO.LOW)
+    print("[WARN] Nun muss der Motor aus sein")
+    # while True:
+    #     for i in range(100, 0, 10):
+    #         print 'set_value:' + str(i)
+    #         setM1(i)
+    #         time.sleep(.1)
 
 def embroideryStop(): #fertig
     softStop()
-    while(GPIO.input(m1, GPIO.HIGH)):
-        GPIO.output(m1_slow, GPIO.HIGH)
-
-    while(GPIO.input(m2_unten, GPIO.LOW)):
-        GPIO.output(m2, GPIO.HIGH)
-    GPIO.output(m2, GPIO.LOW)
-    
-    while(GPIO.input(m4_unten, GPIO.LOW)):
-        GPIO.output(m4, GPIO.HIGH)
-    GPIO.output(m4, GPIO.LOW)
-    
-    cutRope()
+    adjustMotor(m1, m1_low) #Nadelposition
+    adjustMotor(m2_unten, m2) #Getriebe
+    adjustMotor(m4_unten, m4) #Nadelarm
+    print("[WARN] Ihnen bleiben 20 Sekunden um den Faden abzuschneiden")
+    time.sleep(20)
+    print("[WARN] Nun muss Faden abgeschnitten sein")
+    #cutRope()
     return True
 
 def change2StartColor(): #fertig
     MoveHead_Left(color_before)
     color_before = 0
-    if(GPIO.input(s5_unten, GPIO.LOW)):  #checken, ob es wirklich in der startposition ist
-        GPIO.output(m5, GPIO.HIGH)
-        if(GPIO.input(s5_unten, GPIO.HIGH)):
-            GPIO.input(m5, GPIO.LOW)
+    adjustMotor(m5_unten, m5)
+
 
 #CNC
 def X(Fsteps,Bsteps): #fertig
@@ -293,7 +286,7 @@ def execute(): #fertig
             printColor(color)
     change2StartColor()
 
-print(str(color_list)) #nur zum Test, ob der filename = "grün.txt" oder nur "grün" ist (wichtig für "ColorConverter()")
+print("[INFO] Der Dateiname ist: " + str(color_list)) #nur zum Test, ob der filename = "grün.txt" oder nur "grün" ist (wichtig für "ColorConverter()")
 time.sleep(5)
 execute()
 GPIO.cleanup()
