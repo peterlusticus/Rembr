@@ -1,0 +1,2 @@
+Kdm9qWuR
+ssh pi@raspberrypi
