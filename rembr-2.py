@@ -4,7 +4,7 @@ import os, sys
 import threading
 
 #Global var's
-path = "/home/pi/Desktop/Rembr-main/cnc/"
+path = "/home/pi/Desktop/Rembr/old/cnc"
 color_list = os.listdir(path)
 color_before = 0
 m1_start = 30
@@ -17,76 +17,83 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
 #X-Axis
-xdir = 13
-xpul = 11
-xena = 15
+xdir = 38
+xpul = 36
+xena = 40
 GPIO.setup(xdir, GPIO.OUT)
 GPIO.setup(xpul, GPIO.OUT)
 GPIO.setup(xena, GPIO.OUT)
 #Y-Axis
-ydir = 21
-ypul = 19
-yena = 23
+ydir = 26
+ypul = 24
+yena = 32
 GPIO.setup(ydir, GPIO.OUT)
 GPIO.setup(ypul, GPIO.OUT)
 GPIO.setup(yena, GPIO.OUT)
 
 #big needle motor 24V
-m1 = 7
+m1 = 8
 s1 = 5
 GPIO.setup(s1,GPIO.IN)
 GPIO.setup(m1, GPIO.OUT)
-GPIO.output(m1,GPIO.HIGH)
-m1 = GPIO.PWM(m1, 100)
-m1.start(1)
 
 #needle gear
-m2 = 8
-m2_oben = 10
-m2_unten = 12
+m2 = 16
+m2_oben = 29
+m2_unten = 31
 GPIO.setup(m2, GPIO.OUT)
 GPIO.setup(m2_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m2_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #string pulling thing
-m3 = 16
-m3_oben = 18
-m3_unten = 22
+m3 = 18
+m3_oben = 7
+m3_unten = 11
 GPIO.setup(m3, GPIO.OUT)
 GPIO.setup(m3_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m3_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #needle storage arm
-m4 = 24
-m4_oben = 26
-m4_unten = 28
+m4 = 22
+m4_oben = 19
+m4_unten = 21
 GPIO.setup(m4, GPIO.OUT)
 GPIO.setup(m4_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m4_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #maschien head
-m5_right = 24
-m5_left = 30
-m5_oben = 26
+m5_right = 37
+m5_left = 10
+m5_oben = 13
+m5_unten = 15
 GPIO.setup(m5_right, GPIO.OUT)
 GPIO.setup(m5_left, GPIO.OUT)
 GPIO.setup(m5_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m5_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #String cutting knife
-m6 = 24
-m6_oben = 26
-m6_unten = 28
+m6 = 12
+m6_oben = 33
+m6_unten = 35
 GPIO.setup(m6, GPIO.OUT)
 GPIO.setup(m6_oben, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(m6_unten, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #Unterfadenwächter
-ufw = 28
-GPIO.setup(ufw, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#ufw = 28
+#GPIO.setup(ufw, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #----------------------------------HELP-METHODS----------------------------------
 #STICKEN
+def motor_off():
+    GPIO.output(m1, GPIO.LOW)
+    GPIO.output(m2, GPIO.LOW)
+    GPIO.output(m3, GPIO.LOW)
+    GPIO.output(m4, GPIO.LOW)
+    GPIO.output(m5_right, GPIO.LOW)
+    GPIO.output(m5_left, GPIO.LOW)
+    GPIO.output(m6, GPIO.LOW)
+
 def colorConverter():
     for name in color_list:
         if(name == "schwarz.txt"):
@@ -258,6 +265,7 @@ def execute():
         printColor(color)
     change2StartColor()
 
+motor_off()
 execute()
 GPIO.cleanup()
 exit()
