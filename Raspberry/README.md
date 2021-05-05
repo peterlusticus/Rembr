@@ -26,7 +26,7 @@ Wir wollen den PC einer alten Fortron-Stickmaschine mit einem RaspberryPi 3 erse
 
 ## Todo
 
-*    [x]  Methoden: embroideryStart()  embroideryStop()  changeColor()
-*    [x]  Architektur: Zusammenführung von changecolor.py und print.py
-*    [ ]  Fehlerbehebung: Paralleles ausführen von Methoden um schräg zu sticken
-*    [ ]  Methoden: svgSplit()   svg2Gcode()
+*   [x] Methoden: embroideryStart()  embroideryStop()  changeColor()
+*   [x] Architektur: Zusammenführung von changecolor.py und print.py
+*   [ ] Fehlerbehebung: Paralleles ausführen von Methoden um schräg zu sticken
+*   [ ] Methoden: svgSplit() svg2Gcode()
