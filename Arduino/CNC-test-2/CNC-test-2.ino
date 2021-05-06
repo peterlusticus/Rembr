@@ -7,16 +7,16 @@
 #include <string.h>
 
 //X-Axis
-const int xdir = 2;
-const int xpul = 3;
-const int xena = 4;
+const int xdir = A2;
+const int xpul = A1;
+const int xena = A3;
 //Y-Axis
-const int ydir = 5;
-const int ypul = 6;
-const int yena = 7;
+const int ydir = A7;
+const int ypul = 9;
+const int yena = 10;
 //M1
-const int m1 = 8;
-const int s1 =  9;
+const int m1 = 13;
+const int s1 =  2;
 
 //Global vars
 bool dir_left = HIGH;
@@ -37,80 +37,27 @@ void setup() {
   pinMode(m1, OUTPUT);
   pinMode(s1, INPUT);
   //Configure SD-Card
-  while (!SD.begin()) {
-    Serial.println("[SD]: initialization failed");
-    delay(10000);
+  Serial.print("Initializing SD card...");
+
+  if (!SD.begin(4)) {
+    Serial.println("initialization failed!");
+    while (1);
   }
+  Serial.println("initialization done.");
 }
 
 void loop() {
   Serial.println("[start]");
-  analogWrite(m1, 127); //255 is 100%
+  //analogWrite(m1, 127); //255 is 100%
   lifr();
-  analogWrite(m1, 0);
+  //analogWrite(m1, 0);
   Serial.println("[end]");
   delay(100000);
 }
 
-void xstep(bool dir) {
-  digitalWrite(xdir, dir);
-  digitalWrite(xpul, HIGH);
-  delay(9);
-  digitalWrite(xpul, LOW);
-  delay(9);
-  return;
-}
 
-void ystep(bool dir) {
-  digitalWrite(ydir, dir);
-  digitalWrite(ypul, HIGH);
-  delay(9);
-  digitalWrite(ypul, LOW);
-  delay(9);
-  return;
-}
 
-void x(int Fsteps, int Bsteps) {
-  digitalWrite(xena, HIGH);
-  for (int i = 0; i < Fsteps; i++) {
-    xstep(dir_left);
-  }
-  for (int i = 0; i < Bsteps; i++) {
-    xstep(dir_right);
-  }
-  return;
-}
 
-void y(int Fsteps, int Bsteps) {
-  digitalWrite(yena, HIGH);
-  for (int i = 0; i < Fsteps; i++) {
-    ystep(dir_left);
-  }
-  for (int i = 0; i < Bsteps; i++) {
-    ystep(dir_right);
-  }
-  return;
-}
-
-void jog(char axis, int delta) {
-  if (delta > 0) {
-    if (axis == "X") {
-      x(abs(delta), 0);
-    }
-    if (axis == "Y") {
-      y(abs(delta), 0);
-    }
-  }
-  if (delta < 0) {
-    if (axis == "X") {
-      x(0, abs(delta));
-    }
-    if (axis == "Y") {
-      y(0, abs(delta));
-    }
-  }
-  return;
-}
 
 int OpenFile(char Filename[]) {
   gcode = SD.open(Filename, FILE_WRITE);
@@ -138,23 +85,92 @@ void waitForSensor(int buttonPin){
 
 void lifr() {
   OpenFile("sample.txt");
+    float x_before = 0;
+    float y_before = 0;
   while (gcode.available()) {
     String line = gcode.readStringUntil('\r');
-    if ((line.substring(0) == "X") && (line.substring(0) == "Y")) {
-      int len = line.length() + 1; 
-      char coordinates[len];
-      line.toCharArray(coordinates,len);
-      char * Gx = strtok(coordinates, " ");
-      char * Gy = strtok(NULL, " ");
-      Gx = strtok(Gx, "X");
-      Gy = strtok(Gx, "Y");
-      float x = atof(Gx);
-      float y = atof(Gy);
-      Serial.println("X-Steps: " + String((int)x * 10));
-      Serial.println("Y-Steps: " + String((int)y * 10));
-      waitForSensor(s1);
-      jog("X", (int)x * 10);
-      jog("Y", (int)y * 10);
+    if ((line.indexOf("X") > 0) && (line.indexOf("Y") > 0)) {
+      line = line.substring(4);
+      int y_idx = line.indexOf("Y");
+      String Gx = line.substring(1,y_idx);
+      String Gy = line.substring(y_idx+1);
+      float x = (Gx.toFloat())*100;
+      float y = (Gy.toFloat())*100;
+      float x_steps = x - x_before;
+      float y_steps = y - y_before + 10000;
+      x_before = x;
+      y_before = y;
+      //waitForSensor(s1);
+      Serial.println(String(round(x_steps)));
+      Serial.println(String(round(y_steps)));
+      jog(1, round(x_steps/100));
+      jog(2, round(y_steps/100));
+      delay(5000);
     }
   }
+}
+
+void jog(int axis, int delta) {
+  if (delta > 0) {
+    if (axis == 1) {
+      x(abs(delta), 0);
+    }
+    if (axis == 2) {
+      y(abs(delta), 0);
+    }
+  }
+  if (delta < 0) {
+    if (axis == 1) {
+      x(0, abs(delta));
+    }
+    if (axis == 2) {
+      y(0, abs(delta));
+    }
+  }
+  return;
+}
+
+void x(int Fsteps, int Bsteps) {
+  Serial.println("[X] forward: " + String(Fsteps) + "\tbackward: " + String(Bsteps));
+  digitalWrite(xena, HIGH);
+  for (int i = 0; i < Fsteps; i++) {
+    xstep(dir_left);
+  }
+  for (int i = 0; i < Bsteps; i++) {
+    xstep(dir_right);
+  }
+  return;
+}
+
+void y(int Fsteps, int Bsteps) {
+  Serial.println("[Y] forward: " + String(Fsteps) + "\tbackward: " + String(Bsteps));
+  digitalWrite(yena, HIGH);
+  for (int i = 0; i < Fsteps; i++) {
+    ystep(dir_left);
+  }
+  for (int i = 0; i < Bsteps; i++) {
+    ystep(dir_right);
+  }
+  return;
+}
+
+void xstep(bool dir) {
+  Serial.println("X-STEP");
+  digitalWrite(xdir, dir);
+  digitalWrite(xpul, HIGH);
+  delay(9);
+  digitalWrite(xpul, LOW);
+  delay(9);
+  Serial.println("X-STEP END");
+  return;
+}
+
+void ystep(bool dir) {
+  Serial.println("Y-STEP");
+  digitalWrite(ydir, dir);
+  digitalWrite(ypul, HIGH);
+  delay(9);
+  digitalWrite(ypul, LOW);
+  delay(9);
+  return;
 }
