@@ -6,9 +6,9 @@ const int xdir = A2;
 const int xpul = A1;
 const int xena = A3;
 //Y-Axis
-const int ydir = A7;
-const int ypul = 9;
-const int yena = 10;
+const int ydir = 7;
+const int ypul = A5;
+const int yena = A4;
 //M1
 const int m1 = 13;
 const int s1 =  2;
@@ -59,25 +59,32 @@ void lifr() {
   OpenFile("sample.txt");
     float x_before = 0;
     float y_before = 0;
+    int wait_pin = 2;
   while (gcode.available()) {
     String line = gcode.readStringUntil('\r');
     if ((line.indexOf("X") > 0) && (line.indexOf("Y") > 0)) {
       line = line.substring(line.indexOf("X"));
       String Gx = line.substring(1,line.indexOf("Y"));
-      String Gy = line.substring(line.indexOf("Y")+1,line.indexOf("F"));
+      String Gy;
+      if((line.indexOf("F") > 0)){
+        Gy = line.substring(line.indexOf("Y")+1,line.indexOf("F")-1);
+      }else{
+        Gy = line.substring(line.indexOf("Y")+1,100);
+      }
+      
     Serial.println("[lifr]\t Gx: " + Gx + "   Gy: " + Gy);
-      float x = ((Gx.toFloat())*100);
-      float y = ((Gy.toFloat())*100);
-      int x_steps = round((x - x_before)/100);
-      int y_steps = round((x - x_before)/100);
+      float x = ((Gx.toFloat())*30);
+      float y = ((Gy.toFloat())*30);
+      int x_steps = round(x_before - x);
+      int y_steps = round(y_before - y);
       x_before = x;
       y_before = y;
-    Serial.println("[lifr]\t x-steps: " + String(x_steps));
-      Serial.println("[lifr]\t y-steps: " + String(y_steps));
-      //waitForSensor(s1);
+    //Serial.println("[lifr]\t x-steps: " + String(x_steps));
+     // Serial.println("[lifr]\t y-steps: " + String(y_steps));
+      waitForSensor(2);
       jog(1, x_steps); //1 for x
       jog(2, y_steps); //2 for y
-      delay(1);
+      delay(2);
     }
   }
 }
@@ -152,21 +159,19 @@ void y(int Fsteps, int Bsteps) {
 }
 
 void xstep(bool dir) {
-  Serial.println("[xstep]\t step");
   digitalWrite(xdir, dir);
   digitalWrite(xpul, HIGH);
-  delay(9);
+  delay(1);
   digitalWrite(xpul, LOW);
-  delay(9);
+  delay(1);
   return;
 }
 
 void ystep(bool dir) {
-  Serial.println("[ystep]\t step");
   digitalWrite(ydir, dir);
   digitalWrite(ypul, HIGH);
-  delay(9);
+  delay(1);
   digitalWrite(ypul, LOW);
-  delay(9);
+  delay(1);
   return;
 }
