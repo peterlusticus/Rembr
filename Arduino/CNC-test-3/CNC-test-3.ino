@@ -49,7 +49,7 @@ void loop() {
   lifr();
   //analogWrite(m1, 0);
   Serial.println("[loop]\t end");
-  exit(0)
+  exit(0);
 }
 
 
@@ -65,14 +65,14 @@ void lifr() {
       line = line.substring(line.indexOf("X"));
       String Gx = line.substring(1,line.indexOf("Y"));
       String Gy = line.substring(line.indexOf("Y")+1,line.indexOf("F"));
-	  Serial.println("[lifr]\t Gx: " + Gx + "   Gy: " + Gy);
-      float x = (Gx.toFloat())*100);
+    Serial.println("[lifr]\t Gx: " + Gx + "   Gy: " + Gy);
+      float x = ((Gx.toFloat())*100);
       float y = ((Gy.toFloat())*100);
       int x_steps = round((x - x_before)/100);
       int y_steps = round((x - x_before)/100);
       x_before = x;
       y_before = y;
-	  Serial.println("[lifr]\t x-steps: " + String(x_steps));
+    Serial.println("[lifr]\t x-steps: " + String(x_steps));
       Serial.println("[lifr]\t y-steps: " + String(y_steps));
       //waitForSensor(s1);
       jog(1, x_steps); //1 for x
@@ -92,7 +92,7 @@ int OpenFile(char Filename[]) {
     return;
   } else {
     Serial.println("[OpenFile]\t error opening file!");
-    exit(0)
+    exit(0);
   }
 }
 
@@ -107,24 +107,24 @@ void waitForSensor(int buttonPin){
 }
 
 void jog(int axis, int delta) {
-	Serial.println("[jog]\t steps: " + String(abs(delta)));
-	if (delta > 0) {
-		if (axis == 1) {
-			x(abs(delta), 0);
-		}
-		if (axis == 2) {
-			y(abs(delta), 0);
-		}
-	}
-	if (delta < 0) {
-		if (axis == 1) {
-		  x(0, abs(delta));
-		}
-		if (axis == 2) {
-		  y(0, abs(delta));
-		}
-	}
-	return;
+  Serial.println("[jog]\t steps: " + String(abs(delta)));
+  if (delta > 0) {
+    if (axis == 1) {
+      x(abs(delta), 0);
+    }
+    if (axis == 2) {
+      y(abs(delta), 0);
+    }
+  }
+  if (delta < 0) {
+    if (axis == 1) {
+      x(0, abs(delta));
+    }
+    if (axis == 2) {
+      y(0, abs(delta));
+    }
+  }
+  return;
 }
 
 void x(int Fsteps, int Bsteps) {
