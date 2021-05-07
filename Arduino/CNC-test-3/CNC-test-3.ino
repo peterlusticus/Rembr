@@ -19,7 +19,7 @@ bool dir_right = LOW;
 File gcode;
 
 
-//---------------------------------SETUP AND MAIN-FUNCTION---------------------------------
+//------------------------------------------SETUP------------------------------------------
 void setup() {
   Serial.begin(9600);
   //X-Axis
@@ -34,21 +34,21 @@ void setup() {
   pinMode(m1, OUTPUT);
   pinMode(s1, INPUT);
   //Configure SD-Card
-  Serial.print("[setup] initializing SD card");
+  Serial.print("[setup]\t initializing SD card");
 
   if (!SD.begin(4)) {
-    Serial.println("[setup] initialization failed!");
+    Serial.println("[setup]\t initialization failed!");
     while (1);
   }
-  Serial.println("[setup] initialization done");
+  Serial.println("[setup]\t initialization done");
 }
 
 void loop() {
-  Serial.println("[loop] start");
+  Serial.println("[loop]\t start");
   //analogWrite(m1, 127); //255 is 100%
   lifr();
   //analogWrite(m1, 0);
-  Serial.println("[loop] end");
+  Serial.println("[loop]\t end");
   exit(0)
 }
 
@@ -107,8 +107,7 @@ void waitForSensor(int buttonPin){
 }
 
 void jog(int axis, int delta) {
-	Serial.println("[jog]\t x-steps: " + String(delta));
-	Serial.println("[jog]\t y-steps: " + String(delta));
+	Serial.println("[jog]\t steps: " + String(abs(delta)));
 	if (delta > 0) {
 		if (axis == 1) {
 			x(abs(delta), 0);
