@@ -60,6 +60,7 @@ void lifr() {
     float x_before = 0;
     float y_before = 0;
     int wait_pin = 2;
+    int idx = 1;
   while (gcode.available()) {
     String line = gcode.readStringUntil('\r');
     if ((line.indexOf("X") > 0) && (line.indexOf("Y") > 0)) {
@@ -73,18 +74,21 @@ void lifr() {
       }
       
     Serial.println("[lifr]\t Gx: " + Gx + "   Gy: " + Gy);
-      float x = ((Gx.toFloat())*30);
-      float y = ((Gy.toFloat())*30);
+      float x = ((Gx.toFloat())*15);
+      float y = ((Gy.toFloat())*15);
       int x_steps = round(x_before - x);
       int y_steps = round(y_before - y);
       x_before = x;
       y_before = y;
     //Serial.println("[lifr]\t x-steps: " + String(x_steps));
      // Serial.println("[lifr]\t y-steps: " + String(y_steps));
-      waitForSensor(2);
-      jog(1, x_steps); //1 for x
-      jog(2, y_steps); //2 for y
-      delay(2);
+     if(idx > 3){
+         waitForSensor(2);
+        jog(1, x_steps); //1 for x
+        jog(2, y_steps); //2 for y
+        delay(2);
+     }
+      idx = idx + 1;
     }
   }
 }
